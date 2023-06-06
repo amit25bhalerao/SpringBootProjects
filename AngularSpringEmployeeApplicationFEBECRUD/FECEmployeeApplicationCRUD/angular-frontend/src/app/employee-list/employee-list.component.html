@@ -1,0 +1,23 @@
+<table class="table table-bordered table-striped">
+    <thead>
+        <th class="text-center">First Name</th>
+        <th class="text-center">Last Name</th>
+        <th class="text-center">Email Id</th>
+        <th class="text-center">Action</th>
+    </thead>
+    <tbody>
+        <tr *ngFor="let employee of empData">
+            <td>{{ employee.firstName }}</td>
+            <td>{{ employee.lastName }}</td>
+            <td>{{ employee.emailId }}</td>
+            <td class="text-center">
+                <button (click)="updateEmployee(employee.id)" class="btn btn-info">Update</button>
+                &nbsp;
+                <button (click)="deleteEmployee(employee.id)" class="btn btn-danger">Delete</button>       
+            </td>
+        </tr>
+        <tr *ngIf="!empData || empData.length === 0">
+            <td colspan="4" class="text-center">No employees found.</td>
+        </tr>
+    </tbody>
+</table>

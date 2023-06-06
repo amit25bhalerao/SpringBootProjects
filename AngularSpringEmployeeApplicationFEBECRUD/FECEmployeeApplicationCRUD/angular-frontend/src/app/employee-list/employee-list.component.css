@@ -1,0 +1,9 @@
+.table-bordered {
+    border: 2px solid #000; /* Thick outer border */
+  }
+  
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid #000; /* Thin inner border */
+  }
+  

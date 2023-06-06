@@ -1,0 +1,10 @@
+account_number,first_name,last_name,account_type,email_id,person_address,zip_code
+1001001,Arun,Kumar,saving,ak@gmail.com,Delhi,110001
+1001002,John,Thomas,current,jt@gmail.com,Mumbai,400001
+1001003,Paul,Cummins,saving,pc@gmail.com,Bangalore,560001
+1001004,Daniel,Mark,saving,dm@gmail.com,Delhi,110002
+1001005,Nancy,Nick,saving,nn@gmail.com,Hyderabad,500001
+1001006,Ananth,Dani,current,ad@gmail.com,Bangalore,560002
+1001007,Suresh,Malhothra,current,sm@gmail.com,Kochi,682001
+1001008,Vivek,Sharma,current,vs@gmail.com,Mumbai,400002
+1001009,Gautam,  Adani,saving,ga@gmail.com,Ahmedabad,380001
