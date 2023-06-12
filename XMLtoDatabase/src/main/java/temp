@@ -1,0 +1,244 @@
+package com.example.XMLtoDatabase.entity;
+
+public class Student {
+    private int id;
+    private String firstName;
+    private String lastName;
+    private String email;
+
+    public Student(){
+    }
+    public Student(int id, String firstName, String lastName, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+}
+
+
+
+
+---------------
+
+package com.example.XMLtoDatabase.configuration;
+
+import com.example.XMLtoDatabase.entity.StudentEntity;
+import org.springframework.batch.item.database.ItemPreparedStatementSetter;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
+//public class StudentItemPreparedStatementSetter implements ItemPreparedStatementSetter<Student> {
+//    @Override
+//    public void setValues(Student student, PreparedStatement preparedStatement) throws SQLException {
+//        preparedStatement.setInt(1, student.getId());
+//        preparedStatement.setString(2, student.getFirstName());
+//        preparedStatement.setString(3, student.getLastName());
+//        preparedStatement.setString(4, student.getEmail());
+//    }
+//}
+
+public class StudentItemPreparedStatementSetter implements ItemPreparedStatementSetter<List<Student>> {
+    @Override
+    public void setValues(List<Student> students, PreparedStatement preparedStatement) throws SQLException {
+        for (Student student : students) {
+            preparedStatement.setInt(1, student.getId());
+            preparedStatement.setString(2, student.getFirstName());
+            preparedStatement.setString(3, student.getLastName());
+            preparedStatement.setString(4, student.getEmail());
+            preparedStatement.addBatch(); // Add the batch for each student
+        }
+    }
+}
+
+
+_________________
+
+package com.example.XMLtoDatabase.configuration;
+
+import com.example.XMLtoDatabase.entity.StudentEntity;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.xml.StaxEventItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+
+import javax.sql.DataSource;
+import java.util.Collections;
+import java.util.List;
+
+//@Configuration
+//@EnableBatchProcessing
+//public class StudentBatchConfiguration {
+//    @Autowired
+//    private StepBuilderFactory stepBuilderFactory;
+//    @Autowired
+//    private JobBuilderFactory jobBuilderFactory;
+//    @Autowired
+//    private DataSource dataSource;
+//
+//    @Bean
+//    public StaxEventItemReader<Student> readDatafromXML() {
+//        StaxEventItemReader<Student> reader = new StaxEventItemReader<>();
+//        reader.setResource(new FileSystemResource("C:\\Users\\P7113583\\Desktop\\XMLtoDatabase\\src\\main\\resources\\Student.xml"));
+//        reader.setFragmentRootElementName("Student");
+//
+//        Jaxb2Marshaller unmarshaller = new Jaxb2Marshaller();
+//        unmarshaller.setClassesToBeBound(Student.class);
+//
+//        reader.setUnmarshaller(unmarshaller);
+//
+//        return reader;
+//    }
+//
+//    @Bean
+//    public JdbcBatchItemWriter<Student> writeDataToDB() {
+//        JdbcBatchItemWriter<Student> writer = new JdbcBatchItemWriter<>();
+//        writer.setDataSource(dataSource);
+//        writer.setSql("insert into xmltodbdata (id, firstName, lastName, email) values (?, ?, ?, ?)");
+//        writer.setItemPreparedStatementSetter(new StudentItemPreparedStatementSetter());
+//
+//        return writer;
+//    }
+//
+//    @Bean
+//    public Step executeStudentStep() {
+//        return stepBuilderFactory.get("executeStudentStep")
+//                .<Student, Student> chunk(10)
+//                .reader(readDatafromXML())
+//                .writer(writeDataToDB())
+//                .build();
+//    }
+//
+//    @Bean
+//    public Job processStudentJob() {
+//        return jobBuilderFactory.get("processStudentJob")
+//                .incrementer(new RunIdIncrementer())
+//                .flow(executeStudentStep())
+//                .end()
+//                .build();
+//    }
+//}
+
+
+
+@Configuration
+@EnableBatchProcessing
+public class StudentBatchConfiguration {
+
+    @Autowired
+    private StepBuilderFactory stepBuilderFactory;
+
+    @Autowired
+    private JobBuilderFactory jobBuilderFactory;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Bean
+    public StaxEventItemReader<Student> readDatafromXML() {
+        StaxEventItemReader<Student> reader = new StaxEventItemReader<>();
+        reader.setResource(new FileSystemResource("C:\\Users\\P7113583\\Desktop\\XMLtoDatabase\\src\\main\\resources\\Student.xml"));
+        reader.setFragmentRootElementName("Student");
+
+        Jaxb2Marshaller unmarshaller = new Jaxb2Marshaller();
+        unmarshaller.setClassesToBeBound(Student.class);
+
+        reader.setUnmarshaller(unmarshaller);
+
+        return reader;
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<List<Student>> writeDataToDB() {
+        JdbcBatchItemWriter<List<Student>> writer = new JdbcBatchItemWriter<>();
+        writer.setDataSource(dataSource);
+        writer.setSql("insert into xmltodbdata (id, firstName, lastName, email) values (?, ?, ?, ?)");
+        writer.setItemPreparedStatementSetter(new StudentItemPreparedStatementSetter());
+
+        return writer;
+    }
+
+    @Bean
+    public Step executeStudentStep() {
+        return stepBuilderFactory.get("executeStudentStep")
+                .<Student, List<Student>>chunk(10)
+                .reader(readDatafromXML())
+                .processor(studentListProcessor())
+                .writer(writeDataToDB())
+                .build();
+    }
+
+    @Bean
+    public ItemProcessor<Student, List<Student>> studentListProcessor() {
+        return new ItemProcessor<Student, List<Student>>() {
+            @Override
+            public List<Student> process(Student student) throws Exception {
+                // Convert a single student to a list of students
+                return Collections.singletonList(student);
+            }
+        };
+    }
+
+    @Bean
+    public Job processStudentJob() {
+        return jobBuilderFactory.get("processStudentJob")
+                .incrementer(new RunIdIncrementer())
+                .flow(executeStudentStep())
+                .end()
+                .build();
+    }
+}
