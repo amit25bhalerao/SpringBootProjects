@@ -1,0 +1,22 @@
+<Orders>
+    <Order>
+        <OrderID>101</OrderID>
+        <OrderDetails>First Order</OrderDetails>
+    </Order>
+    <Order>
+        <OrderID>102</OrderID>
+        <OrderDetails>Second Order</OrderDetails>
+    </Order>
+    <Order>
+        <OrderID>103</OrderID>
+        <OrderDetails>Third Order</OrderDetails>
+    </Order>
+    <Order>
+        <OrderID>104</OrderID>
+        <OrderDetails>Fourth Order</OrderDetails>
+    </Order>
+    <Order>
+        <OrderID>105</OrderID>
+        <OrderDetails>Fifth Order</OrderDetails>
+    </Order>
+</Orders>
